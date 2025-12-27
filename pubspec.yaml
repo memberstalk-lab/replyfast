@@ -1,0 +1,62 @@
+name: reply_fast
+description: A new Flutter project.
+publish_to: none
+version: 1.0.5+6
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # CRITICAL: Core UI and responsive design - DO NOT REMOVE OR MODIFY
+  sizer: ^2.0.15
+  flutter_svg: ^2.0.9
+  google_fonts: ^6.1.0
+  shared_preferences: ^2.5.3
+  web: ^1.1.1
+  
+  # Feature dependencies - safe to modify
+  cached_network_image: ^3.3.1
+  connectivity_plus: ^6.1.4
+  dio: ^5.4.0
+  fluttertoast: ^8.2.4
+  fl_chart: ^0.65.0
+  percent_indicator: ^4.2.5
+  qr_flutter: ^4.1.0
+  intl: ^0.20.2
+  image_picker: ^1.2.0
+  phone_form_field: ^10.0.16
+  url_launcher: ^6.3.2
+  purchases_flutter: ^9.10.1
+
+  flutter_slidable: any
+  universal_html: ^2.2.4
+  http: any
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+  # ✅ SPLASH SCREEN (SAFE)
+  flutter_native_splash: ^2.4.3
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
+    - assets/images/
+
+# ✅ SPLASH CONFIG (BU BÖLGE GÜVENLİ)
+flutter_native_splash:
+  color: "#43A047"
+  image: assets/images/splash_logo.png
+
+  android_12:
+    color: "#43A047"
+    image: assets/images/splash_logo.png
+    icon_background_color: "#43A047"
+
+  fullscreen: true
