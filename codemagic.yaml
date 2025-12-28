@@ -9,10 +9,9 @@ workflows:
       xcode: latest
       cocoapods: default
       groups:
-        - default # Codemagic panelinde değişkenleri 'default' grubuna eklediysen burası önemli
+        - default # APP_STORE_CONNECT_API_KEY değişkeninin olduğu grup
       vars:
         PRODUCT_BUNDLE_IDENTIFIER: com.replyfast.replyfast
-        APP_STORE_APPLE_ID: 6740114032 # App Store Connect'teki Apple ID'niz (Opsiyonel)
 
     triggering:
       events:
@@ -24,8 +23,9 @@ workflows:
     scripts:
       - name: Set up code signing
         script: |
-          # Anahtarı ve sertifikaları Apple'dan otomatik çeker
+          # Keychain'i başlat ve Apple'dan sertifika/profilleri çek
           keychain initialize
+          # Bu komut Apple Developer portalına bağlanıp gerekli dosyaları otomatik oluşturur
           app-store-connect fetch-signing-files "$PRODUCT_BUNDLE_IDENTIFIER" --type IOS_APP_STORE --create
           keychain add-certificates
       
@@ -34,13 +34,13 @@ workflows:
 
       - name: Pod install
         script: |
-          find . -name "Podfile" -execdir pod install \;
+          # iOS klasörüne gidip podları yükle
+          cd ios && pod install && cd ..
 
       - name: Build iOS IPA
-        # --export-options-plist argümanı Codemagic tarafından otomatik yönetilir
         script: | 
+          # Temiz bir build ve IPA paketleme
           flutter build ipa --release \
-            --bundle-sksl-path flutter_01.sksl.json \
             --export-options-plist=/Users/builder/export_options.plist
 
     artifacts:
@@ -48,14 +48,9 @@ workflows:
 
     publishing:
       app_store_connect:
-        auth: integration # Codemagic arayüzünden bağladığın API key'i kullanır
-        # Alternatif olarak aşağıda belirttiğin manuel key de kalabilir:
-        api_key: |
-          -----BEGIN PRIVATE KEY-----
-          MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQglL9yW7mZOnOBwNwy
-          ctOkAh2OU3K8GhX+iUYNiu0haJmhRANCAAQG1zzRjFxHbLGc3/Ii9JfzHwNScswv
-          CpEjyz1V42okorqjtsN98TVoPTuPG17UATpg/PAbvyOZX1/lJ/SmYmUQ
-          -----END PRIVATE KEY-----
+        # HATA ÇÖZÜMÜ: Sadece manuel bilgileri bırakıyoruz veya sadece auth: integration diyoruz.
+        # Aşağıdaki yapı manuel giriş için en güvenli olanıdır:
+        api_key: $APP_STORE_CONNECT_API_KEY
         key_id: 8VCVB2PJ6S
         issuer_id: a37cd7f7-8f5e-4b21-ac6d-1c7de1a33b63
         submit_to_testflight: true
