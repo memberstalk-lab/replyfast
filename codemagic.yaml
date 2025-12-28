@@ -9,9 +9,7 @@ workflows:
       xcode: latest
       cocoapods: default
       vars:
-        # Sizin Bundle ID'niz
         PRODUCT_BUNDLE_IDENTIFIER: com.replyfast.replyfast
-        # Apple Developer bilgileriniz
         APP_STORE_CONNECT_ISSUER_ID: a37cd7f7-8f5e-4b21-ac6d-1c7de1a33b63
         APP_STORE_CONNECT_KEY_IDENTIFIER: 8VCVB2PJ6S
 
@@ -27,15 +25,20 @@ workflows:
         script: |
           keychain initialize
           
-          # Anahtarı hata payı olmayacak şekilde script içinde tanımlıyoruz
-          app-store-connect fetch-signing-files "$PRODUCT_BUNDLE_IDENTIFIER" \
-            --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
-            --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
-            --private-key "-----BEGIN PRIVATE KEY-----
+          # Anahtarı geçici bir dosyaya yazıyoruz (Format hatasını engellemek için en kesin yol)
+          cat <<EOF > /tmp/apple_key.p8
+          -----BEGIN PRIVATE KEY-----
           MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQglL9yW7mZOnOBwNwy
           ctOkAh2OU3K8GhX+iUYNiu0haJmhRANCAAQG1zzRjFxHbLGc3/Ii9JfzHwNScswv
           CpEjyz1V42okorqjtsN98TVoPTuPG17UATpg/PAbvyOZX1/lJ/SmYmUQ
-          -----END PRIVATE KEY-----" \
+          -----END PRIVATE KEY-----
+          EOF
+          
+          # Apple sunucularından sertifikaları çekiyoruz
+          app-store-connect fetch-signing-files "$PRODUCT_BUNDLE_IDENTIFIER" \
+            --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
+            --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
+            --private-key "$(cat /tmp/apple_key.p8)" \
             --type IOS_APP_STORE \
             --create
           
@@ -50,7 +53,6 @@ workflows:
 
       - name: Build iOS IPA
         script: | 
-          # Export options plist dosyasını Codemagic otomatik oluşturur
           flutter build ipa --release \
             --export-options-plist=/Users/builder/export_options.plist
 
@@ -59,7 +61,6 @@ workflows:
 
     publishing:
       app_store_connect:
-        # Yayınlama aşamasında kullanılan anahtar bilgileri
         api_key: |
           -----BEGIN PRIVATE KEY-----
           MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQglL9yW7mZOnOBwNwy
