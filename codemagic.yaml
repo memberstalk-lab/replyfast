@@ -8,9 +8,11 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
+      groups:
+        - default # Codemagic panelinde değişkenleri 'default' grubuna eklediysen burası önemli
       vars:
         PRODUCT_BUNDLE_IDENTIFIER: com.replyfast.replyfast
-        DEVELOPMENT_TEAM: 8GZ776NSU2
+        APP_STORE_APPLE_ID: 6740114032 # App Store Connect'teki Apple ID'niz (Opsiyonel)
 
     triggering:
       events:
@@ -20,20 +22,34 @@ workflows:
           include: true
 
     scripts:
-      - name: Flutter clean
-        script: flutter clean
-
+      - name: Set up code signing
+        script: |
+          # Anahtarı ve sertifikaları Apple'dan otomatik çeker
+          keychain initialize
+          app-store-connect fetch-signing-files "$PRODUCT_BUNDLE_IDENTIFIER" --type IOS_APP_STORE --create
+          keychain add-certificates
+      
       - name: Flutter pub get
         script: flutter pub get
 
+      - name: Pod install
+        script: |
+          find . -name "Podfile" -execdir pod install \;
+
       - name: Build iOS IPA
-        script: flutter build ipa
+        # --export-options-plist argümanı Codemagic tarafından otomatik yönetilir
+        script: | 
+          flutter build ipa --release \
+            --bundle-sksl-path flutter_01.sksl.json \
+            --export-options-plist=/Users/builder/export_options.plist
 
     artifacts:
       - build/ios/ipa/*.ipa
 
     publishing:
       app_store_connect:
+        auth: integration # Codemagic arayüzünden bağladığın API key'i kullanır
+        # Alternatif olarak aşağıda belirttiğin manuel key de kalabilir:
         api_key: |
           -----BEGIN PRIVATE KEY-----
           MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQglL9yW7mZOnOBwNwy
