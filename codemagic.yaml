@@ -8,8 +8,6 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
-      vars:
-        APP_STORE_CONNECT_API_KEY: Encrypted(...) # Codemagic'te ekleniyor
 
     triggering:
       events:
@@ -26,16 +24,19 @@ workflows:
         script: flutter pub get
 
       - name: Build iOS IPA
-        script: |
-          flutter build ipa --release \
-            --export-options-plist=ios/ExportOptions.plist
+        script: flutter build ipa --release
 
     artifacts:
       - build/ios/ipa/*.ipa
 
     publishing:
       app_store_connect:
-        api_key: $APP_STORE_CONNECT_API_KEY
-        key_id: N45EJX05HH9A
+        api_key: |
+          -----BEGIN PRIVATE KEY-----
+      MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQglL9yW7mZOnOBwNwy
+      ctOkAh2OU3K8GhX+iUYNiu0haJmhRANCAAQG1zzRjFxHbLGc3/Ii9JfzHwNScswv
+      CpEjyz1V42okorqjtsN98TVoPTuPG17UATpg/PAbvyOZX1/lJ/SmYmUQ
+-----END PRIVATE KEY-----
+        key_id: 8VCVB2PJ6S
         issuer_id: a37cd7f7-8f5e-4b21-ac6d-1c7de1a33b63
         submit_to_testflight: true
