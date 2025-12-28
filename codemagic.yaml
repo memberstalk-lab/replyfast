@@ -8,6 +8,8 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
+      vars:
+        APP_STORE_CONNECT_API_KEY: Encrypted(...) # Codemagic'te ekleniyor
 
     triggering:
       events:
@@ -18,16 +20,15 @@ workflows:
 
     scripts:
       - name: Flutter clean
-        script: |
-          flutter clean
+        script: flutter clean
 
       - name: Flutter pub get
-        script: |
-          flutter pub get
+        script: flutter pub get
 
       - name: Build iOS IPA
         script: |
-          flutter build ipa --release
+          flutter build ipa --release \
+            --export-options-plist=ios/ExportOptions.plist
 
     artifacts:
       - build/ios/ipa/*.ipa
