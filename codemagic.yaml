@@ -31,14 +31,14 @@ workflows:
           keychain initialize
 
           echo "🔑 Decode App Store Connect private key"
-          echo "$APP_STORE_CONNECT_PRIVATE_KEY_BASE64" | base64 --decode > /tmp/AuthKey.p8
+          echo "$APP_STORE_CONNECT_PRIVATE_KEY_BASE64" | base64 --decode > /AuthKey.p8
           chmod 600 /tmp/AuthKey.p8
 
           echo "📦 Fetch signing files"
           app-store-connect fetch-signing-files "$PRODUCT_BUNDLE_IDENTIFIER" \
             --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
             --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
-            --private-key /tmp/AuthKey.p8 \
+            --private-key /AuthKey.p8 \
             --type IOS_APP_STORE \
             --create
 
