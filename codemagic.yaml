@@ -11,7 +11,7 @@ workflows:
       vars:
         PRODUCT_BUNDLE_IDENTIFIER: com.replyfast.replyfast
         APP_STORE_CONNECT_ISSUER_ID: a37cd7f7-8f5e-4b21-ac6d-1c7de1a33b63
-        APP_STORE_CONNECT_KEY_IDENTIFIER: 9T4THQXV8Y
+        APP_STORE_CONNECT_KEY_IDENTIFIER: 9RA3B3F29N
         BUILD_NUMBER: 1
 
     triggering:
@@ -30,7 +30,7 @@ workflows:
           app-store-connect fetch-signing-files "$PRODUCT_BUNDLE_IDENTIFIER" \
             --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
             --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
-            --private-key AuthKey_9T4THQXV8Y.p8 \
+            --private-key AuthKey_9RA3B3F29N.p8 \
             --type IOS_APP_STORE \
             --create
 
@@ -52,7 +52,7 @@ workflows:
 
     publishing:
       app_store_connect:
-        api_key: AuthKey_9T4THQXV8Y.p8
-        key_id: 9T4THQXV8Y
+        api_key: AuthKey_9RA3B3F29N.p8
+        key_id: 9RA3B3F29N
         issuer_id: a37cd7f7-8f5e-4b21-ac6d-1c7de1a33b63
         submit_to_testflight: true
