@@ -10,6 +10,8 @@ workflows:
       cocoapods: default
       vars:
         PRODUCT_BUNDLE_IDENTIFIER: com.replyfast.replyfast
+        APP_STORE_CONNECT_ISSUER_ID: a37cd7f7-8f5e-4b21-ac6d-1c7de1a33b63
+        APP_STORE_CONNECT_KEY_IDENTIFIER: 8VCVB2PJ6S
 
     triggering:
       events:
@@ -22,15 +24,11 @@ workflows:
       - name: Set up code signing
         script: |
           keychain initialize
-          # Tüm kimlik doğrulama bilgileri doğrudan komuta eklendi
+          # Tüm değişkenleri doğrudan tanımlayarak hata payını sıfırlıyoruz
           app-store-connect fetch-signing-files "$PRODUCT_BUNDLE_IDENTIFIER" \
-            --issuer-id "a37cd7f7-8f5e-4b21-ac6d-1c7de1a33b63" \
-            --key-id "8VCVB2PJ6S" \
-            --private-key "-----BEGIN PRIVATE KEY-----
-          MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQglL9yW7mZOnOBwNwy
-          ctOkAh2OU3K8GhX+iUYNiu0haJmhRANCAAQG1zzRjFxHbLGc3/Ii9JfzHwNScswv
-          CpEjyz1V42okorqjtsN98TVoPTuPG17UATpg/PAbvyOZX1/lJ/SmYmUQ
-          -----END PRIVATE KEY-----" \
+            --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
+            --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
+            --private-key "$APP_STORE_CONNECT_API_KEY" \
             --type IOS_APP_STORE \
             --create
           keychain add-certificates
@@ -52,12 +50,7 @@ workflows:
 
     publishing:
       app_store_connect:
-        api_key: |
-          -----BEGIN PRIVATE KEY-----
-          MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQglL9yW7mZOnOBwNwy
-          ctOkAh2OU3K8GhX+iUYNiu0haJmhRANCAAQG1zzRjFxHbLGc3/Ii9JfzHwNScswv
-          CpEjyz1V42okorqjtsN98TVoPTuPG17UATpg/PAbvyOZX1/lJ/SmYmUQ
-          -----END PRIVATE KEY-----
+        api_key: $APP_STORE_CONNECT_API_KEY
         key_id: 8VCVB2PJ6S
         issuer_id: a37cd7f7-8f5e-4b21-ac6d-1c7de1a33b63
         submit_to_testflight: true
