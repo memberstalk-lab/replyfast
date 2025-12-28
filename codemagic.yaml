@@ -4,9 +4,6 @@ workflows:
     max_build_duration: 60
     instance_type: mac_mini_m2
 
-    integrations:
-      app_store_connect: appstore_key
-
     environment:
       flutter: stable
       xcode: latest
@@ -30,11 +27,14 @@ workflows:
           #!/usr/bin/env bash
           set -e
 
+          echo "🔐 Initialize keychain"
           keychain initialize
 
+          echo "🔑 Decode App Store Connect private key"
           echo "$APP_STORE_CONNECT_PRIVATE_KEY_BASE64" | base64 --decode > /tmp/AuthKey.p8
           chmod 600 /tmp/AuthKey.p8
 
+          echo "📦 Fetch signing files"
           app-store-connect fetch-signing-files "$PRODUCT_BUNDLE_IDENTIFIER" \
             --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
             --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
@@ -42,6 +42,7 @@ workflows:
             --type IOS_APP_STORE \
             --create
 
+          echo "📜 Add certificates"
           keychain add-certificates
 
       - name: Flutter pub get
@@ -59,8 +60,3 @@ workflows:
 
     artifacts:
       - build/ios/ipa/*.ipa
-
-    publishing:
-      app_store_connect:
-        auth: integration
-        submit_to_testflight: true
