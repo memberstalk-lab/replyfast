@@ -30,7 +30,7 @@ workflows:
           app-store-connect fetch-signing-files "$PRODUCT_BUNDLE_IDENTIFIER" \
             --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
             --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
-            --private-key certs/AuthKey_9T4THQXV8Y.p8 \
+            --private-key AuthKey_9T4THQXV8Y.p8 \
             --type IOS_APP_STORE \
             --create
 
