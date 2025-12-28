@@ -8,6 +8,9 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
+      vars:
+        PRODUCT_BUNDLE_IDENTIFIER: com.replyfast.app
+        DEVELOPMENT_TEAM: 8GZ776NSU2
 
     triggering:
       events:
@@ -24,7 +27,7 @@ workflows:
         script: flutter pub get
 
       - name: Build iOS IPA
-        script: flutter build ipa --release
+        script: flutter build ipa
 
     artifacts:
       - build/ios/ipa/*.ipa
