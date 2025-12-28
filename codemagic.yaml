@@ -9,7 +9,9 @@ workflows:
       xcode: latest
       cocoapods: default
       vars:
+        # Sizin Bundle ID'niz
         PRODUCT_BUNDLE_IDENTIFIER: com.replyfast.replyfast
+        # Apple Developer bilgileriniz
         APP_STORE_CONNECT_ISSUER_ID: a37cd7f7-8f5e-4b21-ac6d-1c7de1a33b63
         APP_STORE_CONNECT_KEY_IDENTIFIER: 8VCVB2PJ6S
 
@@ -24,13 +26,19 @@ workflows:
       - name: Set up code signing
         script: |
           keychain initialize
-          # Tüm değişkenleri doğrudan tanımlayarak hata payını sıfırlıyoruz
+          
+          # Anahtarı hata payı olmayacak şekilde script içinde tanımlıyoruz
           app-store-connect fetch-signing-files "$PRODUCT_BUNDLE_IDENTIFIER" \
             --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
             --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
-            --private-key "$APP_STORE_CONNECT_API_KEY" \
+            --private-key "-----BEGIN PRIVATE KEY-----
+          MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQglL9yW7mZOnOBwNwy
+          ctOkAh2OU3K8GhX+iUYNiu0haJmhRANCAAQG1zzRjFxHbLGc3/Ii9JfzHwNScswv
+          CpEjyz1V42okorqjtsN98TVoPTuPG17UATpg/PAbvyOZX1/lJ/SmYmUQ
+          -----END PRIVATE KEY-----" \
             --type IOS_APP_STORE \
             --create
+          
           keychain add-certificates
       
       - name: Flutter pub get
@@ -42,6 +50,7 @@ workflows:
 
       - name: Build iOS IPA
         script: | 
+          # Export options plist dosyasını Codemagic otomatik oluşturur
           flutter build ipa --release \
             --export-options-plist=/Users/builder/export_options.plist
 
@@ -50,7 +59,13 @@ workflows:
 
     publishing:
       app_store_connect:
-        api_key: $APP_STORE_CONNECT_API_KEY
+        # Yayınlama aşamasında kullanılan anahtar bilgileri
+        api_key: |
+          -----BEGIN PRIVATE KEY-----
+          MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQglL9yW7mZOnOBwNwy
+          ctOkAh2OU3K8GhX+iUYNiu0haJmhRANCAAQG1zzRjFxHbLGc3/Ii9JfzHwNScswv
+          CpEjyz1V42okorqjtsN98TVoPTuPG17UATpg/PAbvyOZX1/lJ/SmYmUQ
+          -----END PRIVATE KEY-----
         key_id: 8VCVB2PJ6S
         issuer_id: a37cd7f7-8f5e-4b21-ac6d-1c7de1a33b63
         submit_to_testflight: true
