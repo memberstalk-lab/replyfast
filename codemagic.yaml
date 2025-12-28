@@ -24,15 +24,25 @@ workflows:
     scripts:
       - name: Set up code signing
         script: |
+          #!/usr/bin/env bash
+          set -e
+
+          echo "🔐 Initialize keychain"
           keychain initialize
 
+          echo "🔑 Decode App Store Connect private key"
+          echo "$APP_STORE_CONNECT_PRIVATE_KEY_BASE64" | base64 --decode > /tmp/AuthKey.p8
+          chmod 600 /tmp/AuthKey.p8
+
+          echo "📦 Fetch signing files"
           app-store-connect fetch-signing-files "$PRODUCT_BUNDLE_IDENTIFIER" \
             --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
             --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
-            --private-key "$APP_STORE_CONNECT_PRIVATE_KEY" \
+            --private-key /tmp/AuthKey.p8 \
             --type IOS_APP_STORE \
             --create
 
+          echo "📜 Add certificates to keychain"
           keychain add-certificates
 
       - name: Flutter pub get
@@ -53,7 +63,5 @@ workflows:
 
     publishing:
       app_store_connect:
-        key_id: 9RA3B3F29N
-        issuer_id: a37cd7f7-8f5e-4b21-ac6d-1c7de1a33b63
-        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        auth: integration
         submit_to_testflight: true
