@@ -9,7 +9,7 @@ workflows:
       xcode: latest
       cocoapods: default
       groups:
-        - default # APP_STORE_CONNECT_API_KEY değişkeninin olduğu grup
+        - default
       vars:
         PRODUCT_BUNDLE_IDENTIFIER: com.replyfast.replyfast
 
@@ -23,10 +23,13 @@ workflows:
     scripts:
       - name: Set up code signing
         script: |
-          # Keychain'i başlat ve Apple'dan sertifika/profilleri çek
           keychain initialize
-          # Bu komut Apple Developer portalına bağlanıp gerekli dosyaları otomatik oluşturur
-          app-store-connect fetch-signing-files "$PRODUCT_BUNDLE_IDENTIFIER" --type IOS_APP_STORE --create
+          # Parametreler doğrudan eklendi, eksik değer hatası bu şekilde çözüldü
+          app-store-connect fetch-signing-files "$PRODUCT_BUNDLE_IDENTIFIER" \
+            --issuer-id "a37cd7f7-8f5e-4b21-ac6d-1c7de1a33b63" \
+            --key-id "8VCVB2PJ6S" \
+            --type IOS_APP_STORE \
+            --create
           keychain add-certificates
       
       - name: Flutter pub get
@@ -34,12 +37,10 @@ workflows:
 
       - name: Pod install
         script: |
-          # iOS klasörüne gidip podları yükle
           cd ios && pod install && cd ..
 
       - name: Build iOS IPA
         script: | 
-          # Temiz bir build ve IPA paketleme
           flutter build ipa --release \
             --export-options-plist=/Users/builder/export_options.plist
 
@@ -48,8 +49,6 @@ workflows:
 
     publishing:
       app_store_connect:
-        # HATA ÇÖZÜMÜ: Sadece manuel bilgileri bırakıyoruz veya sadece auth: integration diyoruz.
-        # Aşağıdaki yapı manuel giriş için en güvenli olanıdır:
         api_key: $APP_STORE_CONNECT_API_KEY
         key_id: 8VCVB2PJ6S
         issuer_id: a37cd7f7-8f5e-4b21-ac6d-1c7de1a33b63
