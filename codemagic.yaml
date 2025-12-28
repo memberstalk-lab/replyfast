@@ -36,7 +36,7 @@ workflows:
       MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQglL9yW7mZOnOBwNwy
       ctOkAh2OU3K8GhX+iUYNiu0haJmhRANCAAQG1zzRjFxHbLGc3/Ii9JfzHwNScswv
       CpEjyz1V42okorqjtsN98TVoPTuPG17UATpg/PAbvyOZX1/lJ/SmYmUQ
------END PRIVATE KEY-----
+          -----END PRIVATE KEY-----
         key_id: 8VCVB2PJ6S
         issuer_id: a37cd7f7-8f5e-4b21-ac6d-1c7de1a33b63
         submit_to_testflight: true
