@@ -26,11 +26,10 @@ workflows:
         script: |
           keychain initialize
 
-          # Apple’dan sertifika + provisioning profile çek
           app-store-connect fetch-signing-files "$PRODUCT_BUNDLE_IDENTIFIER" \
             --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
             --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
-            --private-key AuthKey_9RA3B3F29N.p8 \
+            --private-key "$APP_STORE_CONNECT_PRIVATE_KEY" \
             --type IOS_APP_STORE \
             --create
 
@@ -41,7 +40,9 @@ workflows:
 
       - name: Pod install
         script: |
-          cd ios && pod install && cd ..
+          cd ios
+          pod install
+          cd ..
 
       - name: Build iOS IPA
         script: |
@@ -52,7 +53,7 @@ workflows:
 
     publishing:
       app_store_connect:
-        api_key: AuthKey_9RA3B3F29N.p8
         key_id: 9RA3B3F29N
         issuer_id: a37cd7f7-8f5e-4b21-ac6d-1c7de1a33b63
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
         submit_to_testflight: true
