@@ -36,6 +36,6 @@ workflows:
     publishing:
       app_store_connect:
         api_key: $APP_STORE_CONNECT_API_KEY
-        key_id: X68T5ZZN4X
+        key_id: 2LPS6DK2GPBG
         issuer_id: a37cd7f7-8f5e-4b21-ac6d-1c7de1a33b63
         submit_to_testflight: true
