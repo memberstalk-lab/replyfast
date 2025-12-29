@@ -8,11 +8,9 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
-      vars:
-        PRODUCT_BUNDLE_IDENTIFIER: com.replyfast.replyfast
-        APP_STORE_CONNECT_ISSUER_ID: a37cd7f7-8f5e-4b21-ac6d-1c7de1a33b63
-        APP_STORE_CONNECT_KEY_IDENTIFIER: 9RA3B3F29N
-        BUILD_NUMBER: 1
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.replyfast.replyfast
 
     triggering:
       events:
@@ -22,30 +20,6 @@ workflows:
           include: true
 
     scripts:
-      - name: Set up code signing
-        script: |
-          #!/usr/bin/env bash
-          set -e
-
-          echo "🔐 Initialize keychain"
-          keychain initialize
-
-          echo "🔑 Decode App Store Connect private key"
-          KEY_PATH="$CM_BUILD_DIR/AuthKey.p8"
-          printf "%s" "$APP_STORE_CONNECT_PRIVATE_KEY_BASE64" | base64 --decode > "$KEY_PATH"
-          chmod 600 "$KEY_PATH"
-
-          echo "📦 Fetch signing files"
-          app-store-connect fetch-signing-files "$PRODUCT_BUNDLE_IDENTIFIER" \
-            --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
-            --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
-            --private-key "$KEY_PATH" \
-            --type IOS_APP_STORE \
-            --create
-
-          echo "📜 Add certificates"
-          keychain add-certificates
-
       - name: Flutter pub get
         script: flutter pub get
 
@@ -55,9 +29,12 @@ workflows:
           pod install
           cd ..
 
-      - name: Build iOS IPA
-        script: |
-          flutter build ipa --release --build-number=$BUILD_NUMBER
+      - name: Build IPA
+        script: flutter build ipa --release
 
     artifacts:
       - build/ios/ipa/*.ipa
+
+    publishing:
+      app_store_connect:
+        submit_to_testflight: true
