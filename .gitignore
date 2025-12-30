@@ -1,4 +1,6 @@
+# ===============================
 # Miscellaneous
+# ===============================
 *.class
 *.log
 *.pyc
@@ -12,18 +14,22 @@
 .swiftpm/
 migrate_working_dir/
 
-# IntelliJ related
+# ===============================
+# IntelliJ / Android Studio
+# ===============================
 *.iml
 *.ipr
 *.iws
 .idea/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
+# ===============================
+# VS Code
+# ===============================
 #.vscode/
 
-# Flutter/Dart/Pub related
+# ===============================
+# Flutter / Dart / Pub
+# ===============================
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
@@ -33,16 +39,29 @@ migrate_working_dir/
 .pub/
 /build/
 
-# Symbolication related
-app.*.symbols
-
-# Obfuscation related
-app.*.map.json
-
-# Android Studio will place build artifacts here
+# ===============================
+# Android build outputs
+# ===============================
 /android/app/debug
 /android/app/profile
 /android/app/release
 android/app/.cxx
+
+# ===============================
+# Symbolication / Obfuscation
+# ===============================
+app.*.symbols
+app.*.map.json
+
+# ===============================
+# Environment / Secrets  (ÇOK ÖNEMLİ)
+# ===============================
+env.json
+.env
+.env.*
+
+# ===============================
+# Apple API Keys (ASLA COMMIT ETME)
+# ===============================
 *.p8
 AuthKey_*.p8
